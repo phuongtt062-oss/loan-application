@@ -1,0 +1,22 @@
+{
+  "name": "mobile-app",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/mobile_app/lib",
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "flutter run -d chrome",
+        "cwd": "apps/mobile_app"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "flutter build apk --release",
+        "cwd": "apps/mobile_app"
+      }
+    }
+  }
+}

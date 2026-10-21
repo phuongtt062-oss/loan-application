@@ -1,0 +1,154 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["partialIndexes"]
+
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model applicant_details {
+  application_id      String            @id @db.Uuid
+  form_data           Json              @default("{}")
+  applicant_confirmed Boolean           @default(false)
+  confirmed_at        DateTime?         @db.Timestamptz(6)
+  created_at          DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime          @default(now()) @db.Timestamptz(6)
+  loan_applications   loan_applications @relation(fields: [application_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model loan_application_documents {
+  id                 String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  application_id     String            @db.Uuid
+  document_type      document_type
+  storage_key        String
+  original_file_name String?           @db.VarChar(255)
+  mime_type          String?           @db.VarChar(100)
+  file_size_bytes    BigInt?
+  uploaded_at        DateTime          @default(now()) @db.Timestamptz(6)
+  loan_applications  loan_applications @relation(fields: [application_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([application_id], map: "idx_documents_application")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model loan_applications {
+  id                         String                       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  application_code           String                       @unique @db.VarChar(30)
+  applicant_id               String                       @unique(map: "uq_one_open_application_per_applicant", where: raw("(status = ANY (ARRAY['DRAFT'::application_status, 'SUBMITTED'::application_status, 'APPROVED'::application_status, 'ESIGN_PENDING'::application_status]))")) @db.Uuid
+  loan_offer_id              String?                      @db.Uuid
+  status                     application_status           @default(DRAFT)
+  current_step               application_step             @default(EKYC)
+  ekyc_status                ekyc_status                  @default(PENDING)
+  ekyc_data                  Json                         @default("{}")
+  decision_reason            String?
+  esign_status               esign_status                 @default(NOT_STARTED)
+  signed_at                  DateTime?                    @db.Timestamptz(6)
+  submitted_at               DateTime?                    @db.Timestamptz(6)
+  completed_at               DateTime?                    @db.Timestamptz(6)
+  created_at                 DateTime                     @default(now()) @db.Timestamptz(6)
+  updated_at                 DateTime                     @default(now()) @db.Timestamptz(6)
+  applicant_details          applicant_details?
+  loan_application_documents loan_application_documents[]
+  users                      users                        @relation(fields: [applicant_id], references: [id], onUpdate: NoAction)
+  loan_offers                loan_offers?                 @relation(fields: [loan_offer_id], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  loan_decisions             loan_decisions?
+
+  @@index([applicant_id, created_at(sort: Desc)], map: "idx_applications_applicant")
+  @@index([status, created_at(sort: Desc)], map: "idx_applications_status")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model loan_decisions {
+  id                String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  application_id    String            @unique @db.Uuid
+  approver_id       String            @db.Uuid
+  decision          decision_type
+  reason            String?
+  created_at        DateTime          @default(now()) @db.Timestamptz(6)
+  loan_applications loan_applications @relation(fields: [application_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users             users             @relation(fields: [approver_id], references: [id], onUpdate: NoAction)
+
+  @@index([approver_id, created_at(sort: Desc)], map: "idx_loan_decisions_approver")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model loan_offers {
+  id                    String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  offer_id              String              @db.VarChar(100)
+  approximate_emi       Decimal?            @db.Decimal(18, 2)
+  tenure                Int
+  offer_amount          Decimal             @db.Decimal(18, 2)
+  interest_rate_monthly Decimal?            @db.Decimal(10, 6)
+  cash_amount           Decimal?            @db.Decimal(18, 2)
+  insurance_amount      Decimal?            @db.Decimal(18, 2)
+  offer_expiry_date     DateTime?           @db.Date
+  created_at            DateTime            @default(now()) @db.Timestamptz(6)
+  loan_applications     loan_applications[]
+
+  @@index([offer_id], map: "idx_loan_offers_id")
+}
+
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
+model users {
+  id                String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  full_name         String             @db.VarChar(150)
+  email             String             @db.VarChar(255)
+  password_hash     String
+  role              user_role          @default(APPLICANT)
+  phone             String?            @db.VarChar(30)
+  is_active         Boolean            @default(true)
+  created_at        DateTime           @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime           @default(now()) @db.Timestamptz(6)
+  loan_applications loan_applications?
+  loan_decisions    loan_decisions[]
+}
+
+enum application_status {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+  ESIGN_PENDING
+  COMPLETED
+}
+
+enum application_step {
+  EKYC
+  OCR_FORM
+  LOAN_SELECTION
+  REVIEW
+  ESIGN
+  RESULT
+}
+
+enum decision_type {
+  APPROVED
+  REJECTED
+}
+
+enum document_type {
+  ID_FRONT
+  ID_BACK
+  SELFIE
+}
+
+enum ekyc_status {
+  PENDING
+  VERIFIED
+  FAILED
+}
+
+enum esign_status {
+  NOT_STARTED
+  PENDING
+  SIGNED
+  FAILED
+}
+
+enum user_role {
+  APPLICANT
+  APPROVER
+}
