@@ -1,0 +1,9 @@
+.p-inputtext.p-invalid:enabled:focus,
+.p-inputtext.p-invalid:enabled:hover {
+  border-color: var(--p-form-field-invalid-border-color, var(--p-red-500, #dc2626));
+}
+
+:host ::ng-deep p-password.p-invalid .p-inputtext:enabled,
+:host ::ng-deep p-password.p-invalid .p-inputtext:enabled:focus {
+  border-color: var(--p-form-field-invalid-border-color, var(--p-red-500, #dc2626));
+}

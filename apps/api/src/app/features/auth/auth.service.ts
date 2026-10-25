@@ -4,10 +4,14 @@ import { RegisterDto } from "./dto/register.dto";
 import { LoginDto } from "./dto/login.dto";
 import * as bcrypt from "bcrypt";
 import { CustomException } from "../../core/exceptions/custom.exception";
+import { JwtService } from "@nestjs/jwt";
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwtService: JwtService,
+  ) {}
 
   // Register
   async register(registerDto: RegisterDto) {
@@ -67,9 +71,14 @@ export class AuthService {
     }
 
     const { password_hash: _, ...result } = user;
+
+    // Sử dụng JwtService để tạo token
+    const payload = { sub: user.id, email: user.email, role: user.role };
+    const token = await this.jwtService.signAsync(payload);
+
     return {
       message: "Đăng nhập thành công!",
-      user: result,
+      user: {...result, access_token: token},
     };
   }
 }

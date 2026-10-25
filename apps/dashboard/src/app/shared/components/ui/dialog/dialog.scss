@@ -1,0 +1,10 @@
+.app-dialog.p-dialog {
+  .p-dialog-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--p-content-border-color, #e5e7eb) !important;
+  }
+
+  .p-dialog-content {
+    padding: 1.25rem 1.25rem 1.5rem;
+  }
+}

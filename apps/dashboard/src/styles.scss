@@ -1,1 +1,71 @@
-/* You can add global styles to this file, and also import other style files */
+@use "tailwindcss";
+@use "@assets/layout/layout.scss";
+@plugin "tailwindcss-primeui";
+
+@layer tailwind-base, primeng, tailwind-utilities;
+
+@layer tailwind-utilities {
+  @tailwind utilities;
+}
+
+html {
+  background-color: #F1F5F9;
+}
+
+@theme {
+  /* FontFamily (sans) */
+  --font-sans: "Lato", system-ui, sans-serif;
+
+  /* Letter Spacing (tracking) */
+  --tracking-app: -0.006em;
+
+  /* Screens (Breakpoints) */
+  --breakpoint-base: 1128px;
+  --breakpoint-mobile: 600px;
+
+  /* Aspect Ratio */
+  --aspect-banner: 3 / 1;
+  --aspect-portal-banner-desktop: 5 / 1;
+  --aspect-portal-banner-tablet: 1.26 / 1;
+  --aspect-portal-banner-mobile: 1 / 1.26;
+  --aspect-portal-banner-news: 3 / 2;
+
+  /* Font Size */
+  --text-title-login: 54px;
+  --text-title-login--line-height: 78px;
+
+  --text-caption: 54px;
+  --text-caption--line-height: 69.5px;
+
+  --text-title-forgot: 38px;
+  --text-title-forgot--line-height: 78.23px;
+
+  --text-h2: 24px;
+  --text-h2--line-height: 34px;
+
+  --text-xxs: 11px;
+  --text-xxs--line-height: 18px;
+
+  --text-xs: 12px;
+  --text-xs--line-height: 18px;
+
+  /* Colors */
+  --color-primary: #10b981;
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+  --color-gray-100: #F1F5F9;
+  --color-gray-200: #E2E8F0;
+  --color-gray-300: #CBD5E1;
+  --color-gray-400: #94A3B8;
+  --color-gray-500: #64748B;
+  --color-gray-600: #475569;
+  --color-gray-700: #334155;
+  --color-gray-800: #1E293B;
+  --color-gray-900: #0F172A;
+
+  /* Line Heights */
+  --leading-12: 2.813rem;
+  --leading-4-5: 18px;
+  --leading-6-5: 26px;
+  --leading-8-5: 34px;
+}

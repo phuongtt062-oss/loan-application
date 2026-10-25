@@ -8,9 +8,7 @@
   "targets": {
     "build": {
       "executor": "@angular/build:application",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/dashboard",
@@ -23,9 +21,7 @@
             "input": "apps/dashboard/public"
           }
         ],
-        "styles": [
-          "apps/dashboard/src/styles.scss"
-        ]
+        "styles": ["node_modules/primeicons/primeicons.css", "apps/dashboard/src/styles.scss"]
       },
       "configurations": {
         "production": {
@@ -46,7 +42,13 @@
         "development": {
           "optimization": false,
           "extractLicenses": false,
-          "sourceMap": true
+          "sourceMap": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/dashboard/src/environments/environment.ts",
+              "with": "apps/dashboard/src/environments/environment.development.ts"
+            }
+          ]
         }
       }
     },
@@ -56,10 +58,12 @@
       "defaultConfiguration": "development",
       "configurations": {
         "production": {
-          "buildTarget": "dashboard:build:production"
+          "buildTarget": "dashboard:build:production",
+          "proxyConfig": "apps/dashboard/proxy.conf.json" 
         },
         "development": {
-          "buildTarget": "dashboard:build:development"
+          "buildTarget": "dashboard:build:development",
+          "proxyConfig": "apps/dashboard/proxy.conf.json" 
         }
       }
     },
@@ -68,9 +72,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/{projectRoot}"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
         "jestConfig": "apps/dashboard/jest.config.cts",
         "tsConfig": "apps/dashboard/tsconfig.spec.json"

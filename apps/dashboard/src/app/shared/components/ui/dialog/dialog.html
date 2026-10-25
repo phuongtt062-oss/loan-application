@@ -1,0 +1,20 @@
+<p-dialog
+  [(visible)]="visible"
+  [header]="header()"
+  [modal]="modal()"
+  [closable]="closable()"
+  [dismissableMask]="dismissableMask()"
+  [closeOnEscape]="closeOnEscape()"
+  [blockScroll]="blockScroll()"
+  [styleClass]="mergedStyleClass()"
+  [contentStyleClass]="contentStyleClass()"
+  [style]="{ width: width() }"
+  [position]="position()"
+  [draggable]="draggable()"
+  [resizable]="resizable()"
+  [breakpoints]="effectiveBreakpoints()"
+  appendTo="body"
+  (onHide)="emitDialogHide()"
+>
+  <ng-content />
+</p-dialog>

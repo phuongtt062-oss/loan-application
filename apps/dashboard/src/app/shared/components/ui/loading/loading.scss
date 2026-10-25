@@ -1,0 +1,14 @@
+.app-loading {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+.app-loading__backdrop {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--p-surface-950, #020617) 22%, transparent);
+}

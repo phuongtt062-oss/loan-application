@@ -2,9 +2,15 @@ import { Module } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthController } from "./auth.controller";
 import { PrismaModule } from "../../prisma/prisma.module";
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule,  
+    JwtModule.register({
+      global: true,
+      secret: 'SECRET_KEY',
+      signOptions: { expiresIn: '1d' }, // Token có hạn sử dụng trong 1 ngày 
+    }),],
   controllers: [AuthController],
   providers: [AuthService],
 })

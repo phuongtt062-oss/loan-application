@@ -1,0 +1,9 @@
+@if (visible()) {
+<div class="app-loading" [style.z-index]="zIndex()" role="status" aria-live="polite" [attr.aria-busy]="true">
+  <div class="app-loading__backdrop" aria-hidden="true"></div>
+  <div class="custom-spinner flex-col justify-center align-center">
+    <p-progress-spinner [style]="{ width: spinnerSize(), height: spinnerSize() }"
+      [strokeWidth]="strokeWidth()" />
+  </div>
+</div>
+}
